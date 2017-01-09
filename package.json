@@ -1,0 +1,22 @@
+{
+  "name": "rad",
+  "version": "1.0.0",
+  "description": "A Trig Unit Circle to illustrate the basic connections between special right triangles and trig functions",
+  "main": "main.js",
+  "scripts": {
+    
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MH15/rad.git"
+  },
+  "keywords": [
+    "trig"
+  ],
+  "author": "Matthew Hall",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MH15/rad/issues"
+  },
+  "homepage": "https://github.com/MH15/rad#readme"
+}

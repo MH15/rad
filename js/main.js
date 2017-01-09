@@ -75,7 +75,10 @@ var uC = {
 		x: Math.sqrt(3)/2,
 		y: 1/2,
 		h: 1
-	}
+	},
+	sqrt2: "&radic;<span style='border-top: 1px solid #000000; font-size: 14px;'>2</span>/2",
+	sqrt3: "&radic;<span style='border-top: 1px solid #000000; font-size: 14px;'>3</span>/2",
+	onehalf: "<span>1</span>/2"
 }
 
 
@@ -95,7 +98,7 @@ function paint() {
 	c.arc(0, 0, uC.originR, 0, Math.radians(360), false)
 	c.fill()
 	c.stroke()
-
+	
 	c.beginPath()
 	c.moveTo(-uC.radius - 30, 0)
 	c.lineTo(uC.radius + 30, 0)
@@ -103,7 +106,6 @@ function paint() {
 	c.lineTo(0, uC.radius + 30)
 	c.stroke()
 
-	
 	var xAxis = new Line(-uC.radius - 30, 0, uC.radius + 30, 0);
 	var yAxis = new Line(0, uC.radius + 30, 0, -uC.radius - 30);
 	xAxis.drawWithArrowheads(c);
@@ -131,30 +133,65 @@ function drawRadius(x, y, deg) {
 	var yLim = uC.radius*Math.sin(Math.radians(deg) * -1)
 
 	// draw radius
+	c.lineWidth = 2
 	c.lineTo(xLim,yLim)
 	c.stroke()
 	
 	// angle thingy
 	c.beginPath()
-	c.lineWidth = 3
 	c.arc(0, 0, 100, 0, Math.radians(deg) * -1, true)
 	c.stroke()
 
 	c.beginPath()
 	if (Math.round(degrees) % 90 == 0) {
-		console.log("pi/2")
-
-		
+		console.log("pi/2")	
 	}
 
 	if (Math.round(degrees) % 45 == 0) {
 		console.log("pi/4")
 		triangle(xLim, yLim, "rgba(215, 46, 44, 0.6)")
+		outX.innerHTML = uC.sqrt2
+		outY.innerHTML = uC.sqrt2
 	}
 
 	if (Math.round(degrees) % 30 == 0) {
 		console.log("pi/3")
 		triangle(xLim, yLim, "rgba(255, 165, 0, .5)")
+	}
+
+	switch (Math.round(degrees)) {
+		case 30:
+			outX.innerHTML = uC.sqrt3
+			outY.innerHTML = uC.onehalf
+			break
+		case 60:
+			outX.innerHTML = uC.onehalf
+			outY.innerHTML = uC.sqrt3
+			break
+		case 120:
+			outX.innerHTML = "-" + uC.onehalf
+			outY.innerHTML = uC.sqrt3
+			break
+		case 150:
+			outX.innerHTML = "-" + uC.sqrt3
+			outY.innerHTML = uC.onehalf
+			break
+		case 210:
+			outX.innerHTML = "-" + uC.sqrt3
+			outY.innerHTML = "-" + uC.onehalf
+			break
+		case 240:
+			outX.innerHTML = "-" + uC.onehalf
+			outY.innerHTML = "-" + uC.sqrt3
+			break
+		case 300:
+			outX.innerHTML = uC.onehalf
+			outY.innerHTML = "-" + uC.sqrt3
+			break
+		case 330:
+			outX.innerHTML = uC.sqrt3
+			outY.innerHTML = "-" + uC.onehalf
+			break
 	}
 
 	function isInRange(rotation, start, end){
@@ -188,10 +225,6 @@ var outY = document.querySelector("#y")
 function update (mousePos) {
 	degrees = findDegrees(mousePos)
 	radNoPi = noPi(degrees);
-	drawRadius(mousePos.x, mousePos.y * -1, degrees)
-	
-	// var f = new Fraction(0.33);
-	// console.log(f);
 
 	outDeg.innerHTML = Math.round(degrees) + "&deg"
 	outRad.innerHTML = Math.roundTo(radNoPi, 2) + "pi"
@@ -201,6 +234,13 @@ function update (mousePos) {
 	var yLim = uC.radius*Math.sin(Math.radians(degrees) * -1)
 	outX.innerHTML = Math.roundTo(xLim/uC.radius, 2)
 	outY.innerHTML = Math.roundTo(yLim/uC.radius, 2)
+
+	drawRadius(mousePos.x, mousePos.y * -1, degrees)
+	
+	// var f = new Fraction(0.33);
+	// console.log(f);
+
+	
 }
 
 function run(mousePos) {
@@ -220,11 +260,28 @@ function getMousePos(canvas, evt) {
 	};
 }
 
+
+var downFlag = false;
+
+canvas.onmousedown = function () {
+	downFlag = true
+	canvas.style.cursor = "move"
+}
+
+canvas.onmouseup = function () {
+    downFlag = false
+	canvas.style.cursor = "pointer"
+};
+
+
 canvas.addEventListener("mousemove", function(evt) {
-	var mousePos = getMousePos(canvas, evt);
+	if (downFlag) {
+
+		var mousePos = getMousePos(canvas, evt)
 	// var message = 'Mouse position: ' + mousePos.x + ',' + mousePos.y;
 	// console.log(console)
-	run(mousePos)
+		run(mousePos)
+	}
 }, false);
 
 // setInterval(run, 100)
