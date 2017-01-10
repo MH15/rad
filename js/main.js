@@ -63,7 +63,7 @@ c.lineCap="round"
 
 // Data Set
 var uC = {
-	radius: 200,
+	radius: 250,
 	originR: 3,
 	special_45_45_90: {
 		x: Math.sqrt(2)/2,
@@ -112,31 +112,23 @@ function paint() {
 	yAxis.drawWithArrowheads(c);
 }
 
-function clear() {
-	c.fillStyle = "#fff"
-	c.fillRect(-250,-250, 500, 500)
-}
-
 function triangle(xLim, yLim, color) {
 	c.moveTo(0,0)
 	c.lineTo(xLim, 0)
 	c.lineTo(xLim, yLim)
 	c.lineTo(0,0)
+
+	// fill & stroke
 	c.fillStyle = color
 	c.fill()
 	c.stroke()
-}
+}	
 
 function drawRadius(x, y, deg) {
 	c.moveTo(0,0)
 	var xLim = uC.radius*Math.cos(Math.radians(deg) * -1)
 	var yLim = uC.radius*Math.sin(Math.radians(deg) * -1)
 
-	// draw radius
-	c.lineWidth = 2
-	c.lineTo(xLim,yLim)
-	c.stroke()
-	
 	// angle thingy
 	c.beginPath()
 	c.arc(0, 0, 100, 0, Math.radians(deg) * -1, true)
@@ -147,18 +139,25 @@ function drawRadius(x, y, deg) {
 		console.log("pi/2")	
 	}
 
-	if (Math.round(degrees) % 45 == 0) {
-		console.log("pi/4")
+	if (Math.round(degrees) % 45 == 0 && Math.round(degrees) % 90 !== 0) {
 		triangle(xLim, yLim, "rgba(215, 46, 44, 0.6)")
-		outX.innerHTML = uC.sqrt2
-		outY.innerHTML = uC.sqrt2
+		var xString, yString
+		if (x > 0) xString = uC.sqrt2
+		if (x < 0) xString = "-" + uC.sqrt2
+		if (y > 0) yString = "-" + uC.sqrt2
+		if (y < 0) yString = uC.sqrt2
+
+		outX.innerHTML = xString
+		outY.innerHTML = yString
 	}
 
 	if (Math.round(degrees) % 30 == 0) {
-		console.log("pi/3")
 		triangle(xLim, yLim, "rgba(255, 165, 0, .5)")
 	}
 
+	var radius = new Line(0, 0, xLim, yLim);
+	radius.drawWithArrowheads(c);
+	
 	switch (Math.round(degrees)) {
 		case 30:
 			outX.innerHTML = uC.sqrt3
@@ -200,10 +199,6 @@ function drawRadius(x, y, deg) {
 	
 }
 
-function triangles(x, y, deg) {
-
-}
-
 function findDegrees (mousePos) {
 	var degrees = Math.degrees(Math.atan2(mousePos.y, mousePos.x))
 	if (degrees < 0) degrees += 360
@@ -233,7 +228,7 @@ function update (mousePos) {
 	var xLim = uC.radius*Math.cos(Math.radians(degrees) * -1)
 	var yLim = uC.radius*Math.sin(Math.radians(degrees) * -1)
 	outX.innerHTML = Math.roundTo(xLim/uC.radius, 2)
-	outY.innerHTML = Math.roundTo(yLim/uC.radius, 2)
+	outY.innerHTML = Math.roundTo(yLim/uC.radius, 2) * -1
 
 	drawRadius(mousePos.x, mousePos.y * -1, degrees)
 	
@@ -244,7 +239,8 @@ function update (mousePos) {
 }
 
 function run(mousePos) {
-	clear()
+	c.fillStyle = "#fff"
+	c.fillRect(-300,-300, 600, 600)
 	paint()
 	if (mousePos != undefined) {
 		update(mousePos)
@@ -255,8 +251,8 @@ function run(mousePos) {
 function getMousePos(canvas, evt) {
 	var rect = canvas.getBoundingClientRect();
 	return {
-		x: (evt.clientX - rect.left) - 250,
-		y: ((evt.clientY - rect.top) - 250) *-1 
+		x: (evt.clientX - rect.left) - canvas.width/2,
+		y: ((evt.clientY - rect.top) - canvas.height/2) *-1 
 	};
 }
 
