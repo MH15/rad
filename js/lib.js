@@ -16,6 +16,11 @@ Math.realDegrees = function(mousePos) {
 	if (degrees < 0) degrees += 360
 	return degrees
 }
+Math.radsNoPi  = function(degrees) {
+	var rads = Math.radians(degrees)/Math.PI
+	return rads
+}
+
 
 
 function Line(x1,y1,x2,y2){
@@ -87,23 +92,34 @@ function resizeCanvas(canvas) {
 };
 
 
-// pi = \uc03c0
+
+/*
 
 
-// function getRadios (name) {
-// 	var radios = document.getElementsByName(name.toString());
+function getRadios (name) {
+	var radios = document.getElementsByName(name.toString());
 
-// 	for (var i = 0, length = radios.length; i < length; i++) {
-// 		if (radios[i].checked) {
-// 			// do whatever you want with the checked radio
-// 			console.log(radios[i].value);
+	for (var i = 0, length = radios.length; i < length; i++) {
+		if (radios[i].checked) {
+			// do whatever you want with the checked radio
+			console.log(radios[i].value);
 	
-// 			// only one radio can be logically checked, don't check the rest
-// 			break;
-// 		}
-// 	}
+			// only one radio can be logically checked, don't check the rest
+			break;
+		}
+	}
 
-// 	var gender = document.querySelector('input[name = "gender"]:checked').value;
-// document.writeln("You entered " + gender + " for your gender<br>");
+	var gender = document.querySelector('input[name = "gender"]:checked').value;
+document.writeln("You entered " + gender + " for your gender<br>");
 
-// }
+}
+
+
+
+function isInRange(rotation, start, end){
+    return (rotation >= start && rotation <= end) || (rotation >= end && rotation <= start);
+}
+
+
+
+*/

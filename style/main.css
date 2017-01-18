@@ -18,7 +18,7 @@ canvas {
 	position: fixed;
 	bottom: 0;
 	left: 0;
-	height: 200px;
+	height: 170px;
 	width: auto;
 	background: white;
 	padding: 10px;
@@ -68,9 +68,23 @@ canvas {
 .info {
   position: fixed;
   bottom: 0;
-  right: 0;
-  height: 200px;
-  width: auto;
+  left: 200px;
+  height: 170px;
+  width: 200px;
   background: white;
   padding: 10px;
+}
+
+.info div, .info label {
+  width: 100px;
+  line-height: 2;
+}
+
+.info div {
+  float: right;
+}
+
+.info label {
+  float: left;
+  font-weight: bold;
 }
