@@ -1,16 +1,16 @@
 // Setup Canvas to be full width and height
 var canvas = document.querySelector('canvas#graph'),
+	degOut = document.querySelector('div#degrees'),
+	radOut = document.querySelector('div#radians'),
+	xOut = document.querySelector('div#x'),
+	yOut = document.querySelector('div#y'),
 	c = canvas.getContext('2d')
 canvas.width = window.innerWidth
 canvas.height = window.innerHeight
-// resize canvas on window resize
-function resizeCanvas() {
-	canvas.width = window.innerWidth
-	setTimeout(function() {
-		canvas.height = window.innerHeight
-	}, 0);
-};
-// window.onresize = resizeCanvas
+
+resizeCanvas(canvas)
+
+window.onload = paint
 // resizeCanvas()
 // move origin to middle vertically
 // c.translate(canvas.width/2, canvas.height/2);
@@ -28,7 +28,7 @@ var data = {
 		originRatioX: 0.45,
 		height: 400,
 		padding: 40,
-		pixelsPI: 600,
+		pixelsPI: 800,
 		tickLength: 10
 	}
 }
@@ -39,8 +39,37 @@ var points2 = [], pointsTangent = []
 for ( i = 0; i <= 360; i ++) {
 	points2.push({ x: Math.cos(Math.radians(i) * -1), y: Math.sin(Math.radians(i) * -1) })
 }
-console.log(data.circle.originRatioX * canvas.width)
-console.log(data.circle.alternateX > canvas.width * data.circle.originRatioX)
+
+for ( i = 0; i <= 360; i ++) {
+	var y = 0;
+	// if (-.5 < points2[i].x && points2[i].x < .5) {
+	// 	if(points2[i].y < 0) {
+	// 		y = .5
+	// 	}
+	// } else {
+	// 	y = points2[i].y / points2[i].x
+	// }
+	if (points2[i].y > 1) {
+		y = 0
+	} else {
+		y = -points2[i].y / points2[i].x
+	}
+	// if (Math.abs(points2[i].y) > 1) {
+	// 	y = data.graph.height
+	// } else {
+	// 	y = points2[i].y / points2[i].x
+	// }
+	// console.log(points2[i].y)
+	pointsTangent.push({ x: points2[i].x, y: y})
+
+}
+
+//  * -data.graph.height/2
+
+
+// mobile testing
+// console.log(data.circle.originRatioX * canvas.width)
+// console.log(data.circle.alternateX > canvas.width * data.circle.originRatioX)
 
 function goToCircle (c) {
 	var x, y = canvas.height * data.circle.originRatioY
@@ -58,10 +87,11 @@ function goToGraph (c) {
 		data.graph.pixelsPI = 300
 	} else {
 		x = canvas.width * data.graph.originRatioX
-		data.graph.pixelsPI = 600
+		data.graph.pixelsPI = 800
 	}
 	c.translate(x, y)
 }
+
 
 
 function drawUnitCircle() {
@@ -133,63 +163,149 @@ function drawRadius (deg) {
 	c.beginPath()
 	c.arc(0, 0, 60, 0, Math.radians(deg) * -1, true)
 	c.stroke()
+
+	var xFont = Math.cos(Math.radians(deg) * -1) * (data.circle.radius + 25)
+	var yFont = Math.sin(Math.radians(deg) * -1) * (data.circle.radius + 25)
+
+	c.font = 'bold 35px Arial, sans-serif';
+	c.fillStyle = '#ff0000';
+	c.textBaseline = 'middle';
+	c.textAlign = "center"
+	c.fillText(Math.floor(deg).toString(), xFont , yFont);
+	c.strokeStyle = 'blue';
+	c.strokeText(Math.floor(deg).toString(), xFont, yFont);
+
+
 	c.restore()
 }
-
-function drawWaves (deg) {
+// (int, {waves})
+function drawWaves (deg, waves) {
 	c.save()
 	// canvas (0,0) in center of graph
 	goToGraph(c)
 	var period = Math.floor((Math.radians(deg) / (Math.PI * 2)) * data.graph.pixelsPI)
 	// draw origin
-	c.beginPath()
-	c.fillStyle = "#000"
-	c.arc(period, points2[Math.floor(deg)].y * data.graph.height/2, data.circle.originRadius, 0, Math.radians(360))
-	c.fill()
-	c.stroke()
+	
+	
+	switch (waves) {
+		case "sin":
+			sine(false)
+			cosine(true)
+			tangent(true)
+			break
+		case "cos":
+			sine(true)
+			cosine(false)
+			tangent(true)
+			break
+		case "tan":
+			sine(true)
+			cosine(true)
+			tangent(false)
+			break
+		case "all":
+			sine()
+			cosine()
+			tangent()
+		default:
+			sine()
+			cosine()
+			tangent()
+	}
 
-	// draw origin
-	c.beginPath()
-	c.fillStyle = "#000"
-	c.arc(period, points2[Math.floor(deg)].x * -data.graph.height/2, data.circle.originRadius, 0, Math.radians(360))
-	c.fill()
-	c.stroke()
-
-	// graph sin
-	c.beginPath()
-	c.moveTo(0, 0)
-	var degrees = deg
-	for(p = 0; p < deg; p += 2) {
-		c.lineTo(p / 360 * data.graph.pixelsPI, points2[p].y * data.graph.height/2)
+	function sine (dull /*bool*/) {
+		// sine
+		c.beginPath()
+		c.moveTo(0, 0)
+		var degrees = deg
+		for(p = 0; p < deg; p += 2) {
+			c.lineTo(p / 360 * data.graph.pixelsPI, points2[p].y * data.graph.height/2)
+		}
+		if (dull) {
+			c.strokeStyle = "rgba(256, 0, 0, 0.1)"
+		} else {
+			c.strokeStyle = "red"
+		}
+		c.lineWidth = 2;
+		c.stroke()
+		c.beginPath()
+		c.fillStyle = "#000", c.strokeStyle = "#000"
+		c.arc(period, points2[Math.floor(deg)].y * data.graph.height/2, data.circle.originRadius, 0, Math.radians(360))
+		c.fill()
+		c.stroke()
 	}
 	
-	c.strokeStyle = "red"
-	c.stroke()
-
-	// graph cosine
-	c.beginPath()
-	c.moveTo(0, 0)
-	for(p = 0; p < deg; p += 2) {
-		c.lineTo((p / 360) * data.graph.pixelsPI, points2[p].x * -data.graph.height/2)
+	function cosine (dull /*bool*/) {
+		// cosine
+		c.beginPath()
+		c.moveTo(0, 0)
+		for(p = 0; p < deg; p += 2) {
+			c.lineTo(p / 360 * data.graph.pixelsPI, points2[p].x * -data.graph.height/2)
+		}
+		if (dull) {
+			c.strokeStyle = "rgba(0, 0, 256, 0.1)"
+		} else {
+			c.strokeStyle = "blue"
+		}
+		c.lineWidth = 2;
+		c.stroke()
+		c.beginPath()
+		c.fillStyle = "#000", c.strokeStyle = "#000"
+		c.arc(period, points2[Math.floor(deg)].x * -data.graph.height/2, data.circle.originRadius, 0, Math.radians(360))
+		c.fill()
+		c.stroke()
 	}
-	c.strokeStyle = "blue"
-	c.stroke()
 
-	// graph tangent
-	// c.beginPath()
-	// c.moveTo(0, 0)
-	// for(p = 0; p < deg; p += 5) {
-	// 	c.lineTo((p / 360) * data.graph.pixelsPI, (points2[p].y / points2[p].x) * -data.graph.height/2)
-	// }
-	// c.strokeStyle = "green"
-	// c.stroke()
+
+	function tangent (dull /*bool*/) {
+		// tangent
+		c.stroke()
+		c.beginPath()
+		c.fillStyle = "#000", c.strokeStyle = "#000"
+		c.arc(period, pointsTangent[Math.floor(deg)].y * -data.graph.height/4, data.circle.originRadius, 0, Math.radians(360))
+		c.fill()
+		c.stroke()
+		c.beginPath()
+		c.moveTo(0, 0)
+		// var slope = points2[p].y / points2[p].x
+		for(p = 0; p <= deg; p += 2) {
+			y = 0
+			lim = 4
+			if(pointsTangent[p].y > lim) {
+				y = lim
+			} else {
+				if(pointsTangent[p].y < -lim) {
+					y = -lim
+				} else {
+					y = pointsTangent[p].y
+				}
+			}
+			// console.log(pointsTangent[p].y >= 1)
+			if(-lim < pointsTangent[p].y && pointsTangent[p].y < lim) {
+				c.lineTo(p / 360 * data.graph.pixelsPI, y * -data.graph.height/4)
+			} else {
+	
+				c.moveTo(data.graph.pixelsPI/4*(p/90), data.graph.height)
+			}
+		}
+		if (dull) {
+			c.strokeStyle = "rgba(0, 256, 0, 0.1)"
+		} else {
+			c.strokeStyle = "green"
+		}
+		c.lineWidth = 2;
+		c.stroke()
+	}
+	
+
+	
 
 	// vertical line 
 	c.beginPath()
 	c.moveTo(period, data.graph.height)
 	for(i = 0; i < 10; i += 1) {
-		c.moveTo(period, data.graph.height/2 + 10)
-		c.lineTo(period, -data.graph.height/2 - 10)
+		c.moveTo(period, data.graph.height + 10)
+		c.lineTo(period, -data.graph.height - 10)
 	}
 	c.strokeStyle = "black"
 	c.setLineDash([5,5])
@@ -212,26 +328,40 @@ function paint() {
 }
 
 
+
+
 function run(mousePos) {
 	paint()
 
 	if (mousePos != undefined) {
 		var degrees = Math.realDegrees(mousePos)
-
+		getRadios("radio")
 		drawRadius(degrees)
-		drawWaves(degrees)
+		drawWaves(degrees, out)
 	}
 }
 
 // get mouse position
 function getMousePos(canvas, evt) {
 	var rect = canvas.getBoundingClientRect();
+	var x, y = canvas.height * data.circle.originRatioY
+	if (data.circle.alternateX > canvas.width * data.circle.originRatioX) {
+		x = data.circle.alternateX
+	} else {
+		x = canvas.width * data.circle.originRatioX
+	}
 	return {
 		// correct for circle origin being shifted
-		x: (evt.clientX - rect.left) - canvas.width * data.circle.originRatioX,
+		x: (evt.clientX - rect.left) - x,
 		y: ((evt.clientY - rect.top) - canvas.height * data.circle.originRatioY) * -1
 	};
 }
+// select function to graph
+var out
+function getRadios (name) {
+	out = document.querySelector('input[name = "radio"]:checked').value;
+}
+document.querySelector(".settings").onclick = getRadios;
 // only update when you click and drag
 var downFlag = false;
 canvas.onmousedown = function () {
@@ -252,12 +382,3 @@ run();
 
 
 
-  //  for (i = 1; i < points.length - 2; i ++)
-  //  {
-  //     var xc = (points[i].x + points[i + 1].x) / 2;
-  //     var yc = (points[i].y + points[i + 1].y) / 2;
-  //     c.quadraticCurveTo(points[i].x, points[i].y, xc, yc);
-  //  }
- 	// // curve through the last two points
- 	// c.quadraticCurveTo(points[i].x, points[i].y, points[i+1].x,points[i+1].y);
- 	// console.log({ x:Math.cos(Math.radians(deg) * -1) * 100, y:Math.sin(Math.radians(deg)) * 100 })

@@ -5,9 +5,72 @@ html, body {
 	height: 100%;
 	background: black;
 	overflow: hidden;
+	font-family: "Arial", sans-serif
 }
 
 canvas {
 	background: white;
 	// border: 10px solid red;
+}
+
+
+.settings {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	height: 200px;
+	width: auto;
+	background: white;
+	padding: 10px;
+}
+
+.radio {
+  margin: 0.5rem;
+}
+.radio input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+}
+.radio input[type="radio"] + .radio-label:before {
+  content: '';
+  background: #f4f4f4;
+  border-radius: 100%;
+  border: 1px solid #b4b4b4;
+  display: inline-block;
+  width: 1.4em;
+  height: 1.4em;
+  position: relative;
+  top: -0.2em;
+  margin-right: 1em;
+  vertical-align: top;
+  cursor: pointer;
+  text-align: center;
+  // transition: all 250ms ease;
+}
+.radio input[type="radio"]:checked + .radio-label:before {
+  background-color: #3197EE;
+  box-shadow: inset 0 0 0 4px #f4f4f4;
+}
+.radio input[type="radio"]:focus + .radio-label:before {
+  outline: none;
+  border-color: #3197EE;
+}
+.radio input[type="radio"]:disabled + .radio-label:before {
+  box-shadow: inset 0 0 0 4px #f4f4f4;
+  border-color: #b4b4b4;
+  background: #b4b4b4;
+}
+.radio input[type="radio"] + .radio-label:empty:before {
+  margin-right: 0;
+}
+
+
+.info {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  height: 200px;
+  width: auto;
+  background: white;
+  padding: 10px;
 }

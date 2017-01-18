@@ -77,10 +77,33 @@ Line.prototype.drawArrowhead=function(c,x,y,radians){
 }
 
 
-function Translate (c) {
 
-}
-
-Translate.prototype.move = function(first_argument) {
-	// body...
+// resize canvas on window resize
+function resizeCanvas(canvas) {
+	canvas.width = window.innerWidth
+	setTimeout(function() {
+		canvas.height = window.innerHeight
+	}, 0);
 };
+
+
+// pi = \uc03c0
+
+
+// function getRadios (name) {
+// 	var radios = document.getElementsByName(name.toString());
+
+// 	for (var i = 0, length = radios.length; i < length; i++) {
+// 		if (radios[i].checked) {
+// 			// do whatever you want with the checked radio
+// 			console.log(radios[i].value);
+	
+// 			// only one radio can be logically checked, don't check the rest
+// 			break;
+// 		}
+// 	}
+
+// 	var gender = document.querySelector('input[name = "gender"]:checked').value;
+// document.writeln("You entered " + gender + " for your gender<br>");
+
+// }
